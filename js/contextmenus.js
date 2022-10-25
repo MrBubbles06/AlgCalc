@@ -19,7 +19,7 @@ window.addEventListener(
 function parseprob() {
   var prob = window.getSelection().toString();
 
-  if (prob.match(/[\n]/gm)) {
+  if (prob.match(/[\n]/gm) && !prob.match(/[\n]/gm)[1]) {
     var prob1 = prob.split(/[\n]/gm)[0];
     var prob2 = prob.split(/[\n]/gm)[1];
     prob1 = prob1.replace(/[–−]/gm, "-");
@@ -70,6 +70,7 @@ function solvequadratic(o) {
 }
 
 function solveprob(o) {
+  console.log(o);
   sol = nerdamer.solve(o, "x");
   sol = sol.toString();
   solution = sol.replace(/[\]\[]/gm, "");
