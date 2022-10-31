@@ -1,10 +1,18 @@
-body{
+body {
   background-color: #212121;
-  color:white;
+  color: white;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
 }
-input{
-  border:2px lightblue solid;
+input {
+  border: 2px lightblue solid;
   border-radius: 5px;
+}
+a {
+  color: white;
+  text-decoration: none;
+}
+a:hover {
+  color: white;
+  text-decoration: underline;
 }
