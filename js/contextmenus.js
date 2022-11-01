@@ -25,16 +25,67 @@ function parseprob() {
     prob1 = prob1.replace(/[–−]/gm, "-");
     prob2 = prob2.replace(/[–−]/gm, "-");
     solvesystem(prob1, prob2);
-  } else if (prob.match(/(?<=[a-z])[2]/gm)) {
+  } else if (prob.match(/(?<=[a-z])[2]/gm) && prob.match(/=/gm)) {
     prob = prob.replace(/[–−]/gm, "-");
     prob = prob.replace(/[a-zA-Z]/gm, "x");
     prob = prob.replace(/(?<=[a-z])[2]/gm, "^2");
     solvequadratic(prob);
+  } else if (!prob.match(/=/gm)) {
+    prob = prob.replace(/[–−]/gm, "-");
+    uservar = prob.match(/[a-zA-Z]/gm)[0];
+    prob = prob.replace(/(?<=[a-z])[2]/gm, "^2");
+    prob = prob.replace(/(?<=[a-z])[3]/gm, "^3");
+    simplifyprob(prob);
   } else {
     prob = prob.replace(/[–−]/gm, "-");
     prob = prob.replace(/[a-zA-Z]/gm, "x");
     solveprob(prob);
   }
+}
+
+function simplifyprob(o) {
+  sol = nerdamer(o);
+  sol = sol.toString();
+  sol = sol.replace(/[\]\[]/gm, "");
+  if (typeof document.getElementsByClassName("fillIn")[0] != "undefined") {
+    document.getElementsByClassName("fillIn")[0].value = sol;
+    document.getElementsByClassName("fillIn")[0].focus();
+  } else {
+    splitsol = sol.split("");
+    maindiv = document.getElementsByClassName("yui3-sympadfiwidget-content")[0];
+    for (var i = 0; i < splitsol.length; i++) {
+      if (splitsol[i].match(/[\^]/gm)) {
+        chardiv = document.createElement("div");
+        chardiv.setAttribute("class", "plainChar");
+        outterdiv1 = document.createElement("div");
+        outterdiv2 = document.createElement("div");
+        outterdiv1.setAttribute(
+          "class",
+          "exponentAIT expression wholeExp aitBlock"
+        );
+        outterdiv2.setAttribute(
+          "class",
+          "expression exponent exponentAITExponentContent aitContentBox aitInput"
+        );
+        maindiv.append(outterdiv1);
+        outterdiv1.append(outterdiv2);
+        chardiv.append(splitsol[i + 1]);
+        outterdiv2.append(chardiv);
+        i++;
+      } else if (splitsol[i].match(/[a-zA-Z]/gm)) {
+        chardiv = document.createElement("div");
+        chardiv.setAttribute("class", "plainChar alphabetical");
+        chardiv.append(splitsol[i]);
+        maindiv.append(chardiv);
+      } else {
+        chardiv = document.createElement("div");
+        chardiv.setAttribute("class", "plainChar");
+        chardiv.append(splitsol[i]);
+        maindiv.append(chardiv);
+      }
+    }
+  }
+  document.getElementsByClassName("proxy-input")[0].focus();
 }
 
 function solvequadratic(o) {
