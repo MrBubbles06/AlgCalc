@@ -34,7 +34,6 @@ function parseprob() {
     prob = prob.replace(/[–−]/gm, "-");
     uservar = prob.match(/[a-zA-Z]/gm)[0];
     prob = prob.replace(/((?<=[a-z])[1-9]+)/gm, "^$1");
-    console.log(prob);
     simplifyprob(prob);
   } else {
     prob = prob.replace(/[–−]/gm, "-");
