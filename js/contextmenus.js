@@ -28,13 +28,13 @@ function parseprob() {
   } else if (prob.match(/(?<=[a-z])[2]/gm) && prob.match(/=/gm)) {
     prob = prob.replace(/[–−]/gm, "-");
     prob = prob.replace(/[a-zA-Z]/gm, "x");
-    prob = prob.replace(/(?<=[a-z])[2]/gm, "^2");
+    prob = prob.replace(/((?<=[a-z])[1-9]+)/gm, "^$1");
     solvequadratic(prob);
   } else if (!prob.match(/=/gm)) {
     prob = prob.replace(/[–−]/gm, "-");
     uservar = prob.match(/[a-zA-Z]/gm)[0];
-    prob = prob.replace(/(?<=[a-z])[2]/gm, "^2");
-    prob = prob.replace(/(?<=[a-z])[3]/gm, "^3");
+    prob = prob.replace(/((?<=[a-z])[1-9]+)/gm, "^$1");
+    console.log(prob);
     simplifyprob(prob);
   } else {
     prob = prob.replace(/[–−]/gm, "-");
