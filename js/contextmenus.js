@@ -6,18 +6,47 @@ chrome.runtime.onMessage.addListener((req, snd, rsp) => {
   parseprob();
 });
 
+var solvebtn = document.createElement("button");
+var wherethebtngoes = document.getElementsByClassName("yui3-widget-ft")[0];
+solvebtn.setAttribute("class", "crisp-button");
+solvebtn.setAttribute("id", "solvebtn");
+solvebtn.setAttribute(
+  "style",
+  "background-color:lightpink;min-width:auto;margin-right:15px;"
+);
+solvebtn.append("Solve");
+wherethebtngoes.prepend(solvebtn);
+
 window.addEventListener(
   "keypress",
   function (e) {
     if (e.key == "'" && e.ctrlKey) {
-      parseprob();
+      parseprob(window.getSelection().toString());
     }
   },
   false
 );
 
-function parseprob() {
-  var prob = window.getSelection().toString();
+document.getElementById("solvebtn").onclick = function () {
+  if (!window.getSelection().toString()) {
+    alert("please select the problem before pressing the button");
+  } else {
+    parseprob(window.getSelection().toString());
+  }
+};
+
+function findtext() {
+  var probcont = document.getElementsByClassName("secContentPiece")[0];
+  var range = document.createRange();
+  range.deleteContents();
+  range.selectNodeContents(probcont);
+  var sel = range.toString();
+  parseprob(sel);
+}
+
+function parseprob(o) {
+  var prob = o;
+  prob = prob.trim();
 
   if (prob.match(/[\n]/gm) && !prob.match(/[\n]/gm)[1]) {
     var prob1 = prob.split(/[\n]/gm)[0];
@@ -46,7 +75,11 @@ function simplifyprob(o) {
   sol = nerdamer(o);
   sol = sol.toString();
   sol = sol.replace(/[\]\[]/gm, "");
-  if (typeof document.getElementsByClassName("fillIn")[0] != "undefined") {
+  if (
+    typeof document.getElementsByClassName("fillIn")[0] != "undefined" &&
+    document.getElementsByClassName("fillIn")[0].getAttribute("disabled") !=
+      "disabled"
+  ) {
     document.getElementsByClassName("fillIn")[0].value = sol;
     document.getElementsByClassName("fillIn")[0].focus();
   } else {
@@ -83,13 +116,14 @@ function simplifyprob(o) {
         maindiv.append(chardiv);
       }
     }
+    document.getElementsByClassName("proxy-input")[0].focus();
   }
-  document.getElementsByClassName("proxy-input")[0].focus();
 }
 
 function solvequadratic(o) {
   sol = nerdamer.solve(o, "x");
   sol = sol.toString();
+  console.log(sol);
   sol = sol.replace(/[\]\[]/gm, "");
   sol1 = sol.split(/,/gm)[0];
   sol2 = sol.split(/,/gm)[1];
@@ -99,7 +133,7 @@ function solvequadratic(o) {
     return;
   }
   //check if sol1 is a fraction
-  if (sol1.match(/\//gm)) {
+  if (sol1.length > 7 && sol1.match(/\//gm)) {
     sol1 = [sol1.split(/\//gm)[0], sol1.split(/\//gm)[1]];
     sol1[0] = parseFloat(sol1[0]);
     sol1[1] = parseFloat(sol1[1]);
@@ -107,16 +141,33 @@ function solvequadratic(o) {
     sol1 = Math.round((sol1 + Number.EPSILON) * 100) / 100;
   }
   //check if sol2 is a fraction
-  if (sol2.match(/\//gm)) {
+  if (sol2.length > 7 && sol2.match(/\//gm)) {
+    console.log(sol2);
+    console.log(sol2.length);
     sol2 = [sol2.split(/\//gm)[0], sol2.split(/\//gm)[1]];
     sol2[0] = parseFloat(sol2[0]);
     sol2[1] = parseFloat(sol2[1]);
     sol2 = sol2[0] / sol2[1];
     sol2 = Math.round((sol2 + Number.EPSILON) * 100) / 100;
   }
-  document.getElementsByClassName("fillIn")[0].value = sol1;
-  document.getElementsByClassName("fillIn")[1].value = sol2;
-  document.getElementsByClassName("fillIn")[1].focus();
+  if (
+    typeof document.getElementsByClassName("fillIn")[0] != "undefined" &&
+    document.getElementsByClassName("fillIn")[0].getAttribute("disabled") !=
+      "disabled" &&
+    typeof document.getElementsByClassName("fillIn")[1] != "undefined" &&
+    document.getElementsByClassName("fillIn")[1].getAttribute("disabled") !=
+      "disabled"
+  ) {
+    document.getElementsByClassName("fillIn")[0].value = sol1;
+    document.getElementsByClassName("fillIn")[1].value = sol2;
+    document.getElementsByClassName("fillIn")[1].focus();
+  } else if (
+    typeof document.getElementsByClassName("fillIn")[1] == "undefined" ||
+    document.getElementsByClassName("fillIn")[1].getAttribute("disabled") ==
+      "disabled"
+  ) {
+    document.getElementsByClassName("fillIn")[0].value = sol1 + "," + sol2;
+  }
 }
 
 function solveprob(o) {
